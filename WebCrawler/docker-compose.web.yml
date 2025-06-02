@@ -1,0 +1,18 @@
+services:
+  webcrawler:
+    build: .
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ELASTICSEARCH_URI=http://elasticsearch:9200
+      - RESULTS_DIRECTORY=/app/results
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5000:80"
+    networks:
+      - webcrawler-net
+    volumes:
+      - ./results:/app/results
+
+networks:
+  webcrawler-net:
+    external: true

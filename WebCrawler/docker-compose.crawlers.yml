@@ -1,0 +1,124 @@
+services:
+  crawler1:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_1.csv
+      - CRAWLER_DONE_FILE=crawler1.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  crawler2:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_2.csv
+      - CRAWLER_DONE_FILE=crawler2.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  crawler3:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_3.csv
+      - CRAWLER_DONE_FILE=crawler3.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  crawler4:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_4.csv
+      - CRAWLER_DONE_FILE=crawler4.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  crawler5:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_5.csv
+      - CRAWLER_DONE_FILE=crawler5.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  crawler6:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_6.csv
+      - CRAWLER_DONE_FILE=crawler6.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  crawler7:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_7.csv
+      - CRAWLER_DONE_FILE=crawler7.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  crawler8:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_8.csv
+      - CRAWLER_DONE_FILE=crawler8.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  crawler9:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_9.csv
+      - CRAWLER_DONE_FILE=crawler9.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  crawler10:
+    build: .
+    command: [ "--crawl" ]
+    environment:
+      - DOMAIN_FILE=domains_10.csv
+      - CRAWLER_DONE_FILE=crawler10.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+
+  combiner:
+    build: .
+    entrypoint: []
+    command: [ "sh", "-c", "echo 'COMBINER: Starting and waiting for crawlers...' && while [ $(ls /app/results/crawler*.done 2>/dev/null | wc -l) -lt 10 ]; do echo 'COMBINER: Found' $(ls /app/results/crawler*.done 2>/dev/null | wc -l) 'files, waiting...' && sleep 15; done && echo 'COMBINER: All done files found, starting merge...' && dotnet WebCrawler.dll --combine-and-merge && echo 'COMBINER: Completed successfully'" ]
+    volumes:
+      - ./results:/app/results
+    depends_on:
+      - crawler1
+      - crawler2
+      - crawler3
+      - crawler4
+      - crawler5
+      - crawler6
+      - crawler7
+      - crawler8
+      - crawler9
+      - crawler10
+    networks:
+      - webcrawler-net
+
+networks:
+  webcrawler-net:
+    external: true

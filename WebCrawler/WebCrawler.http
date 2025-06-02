@@ -1,0 +1,13 @@
+@WebCrawler_HostAddress = http://localhost:5151
+
+GET {{WebCrawler_HostAddress}}/api/crawl/GetDomains
+Accept: application/json
+
+###
+GET {{WebCrawler_HostAddress}}/api/crawl/GetDataFromDomains
+Accept: application/json
+
+###
+POST {{WebCrawler_HostAddress}}/api/crawl/MergeDocuments
+Accept: application/json
+

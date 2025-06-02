@@ -1,0 +1,174 @@
+services:
+  crawler1:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_1.csv
+      - CRAWLER_DONE_FILE=crawler1.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  crawler2:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_2.csv
+      - CRAWLER_DONE_FILE=crawler2.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  crawler3:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_3.csv
+      - CRAWLER_DONE_FILE=crawler3.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  crawler4:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_4.csv
+      - CRAWLER_DONE_FILE=crawler4.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  crawler5:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_5.csv
+      - CRAWLER_DONE_FILE=crawler5.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  crawler6:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_6.csv
+      - CRAWLER_DONE_FILE=crawler6.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  crawler7:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_7.csv
+      - CRAWLER_DONE_FILE=crawler7.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  crawler8:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_8.csv
+      - CRAWLER_DONE_FILE=crawler8.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  crawler9:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_9.csv
+      - CRAWLER_DONE_FILE=crawler9.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  crawler10:
+    build: .
+    command: ["--crawl"]
+    environment:
+      - DOMAIN_FILE=domains_10.csv
+      - CRAWLER_DONE_FILE=crawler10.done
+      - RESULTS_DIRECTORY=/app/results
+    volumes:
+      - ./results:/app/results
+    networks:
+      - webcrawler-net
+
+  combiner:
+    build: .
+    entrypoint: []
+    command: ["sh", "-c", "echo 'COMBINER: Starting and waiting for crawlers...' && while [ $(ls /app/results/crawler*.done 2>/dev/null | wc -l) -lt 10 ]; do echo 'COMBINER: Found' $(ls /app/results/crawler*.done 2>/dev/null | wc -l) 'files, waiting...' && sleep 15; done && echo 'COMBINER: All done files found, starting merge...' && dotnet WebCrawler.dll --combine-and-merge && echo 'COMBINER: Completed successfully'"]
+    volumes:
+      - ./results:/app/results
+    depends_on:
+      - crawler1
+      - crawler2
+      - crawler3
+      - crawler4
+      - crawler5
+      - crawler6
+      - crawler7
+      - crawler8
+      - crawler9
+      - crawler10
+    networks:
+      - webcrawler-net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - webcrawler-net
+
+  webcrawler:
+    build: .
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ELASTICSEARCH_URI=http://elasticsearch:9200
+      - RESULTS_DIRECTORY=/app/results
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5000:80"
+    networks:
+      - webcrawler-net
+
+volumes:
+  esdata:
+
+networks:
+  webcrawler-net:
+    external: true
